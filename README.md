@@ -31,9 +31,8 @@ To fetch your live ticket data, you need to create an API key in Ticket Tailor:
 5. Copy the generated API key.
 
 ### Step 4: Configure the App
-1. Inside the unzipped Ticket Dash folder, find the file named `.env.example` and rename it to `.env`.
-2. Open `.env` in any text editor (like Notepad on Windows or TextEdit on Mac).
-3. Paste your API key next to the `=` sign (e.g., `TICKET_TAILOR_API_KEY=your_key_here`). Save and close the file.
+1. Inside the unzipped Ticket Dash folder, open the file named `.env` in any text editor (like Notepad on Windows or TextEdit on Mac).
+2. Paste your API key next to the `=` sign (e.g., `TICKET_TAILOR_API_KEY=your_key_here`). Save and close the file.
 *(Note: If you leave this blank, the app runs in **Demo Mode** with sample events and tickets so you can still play with it).*
 
 ### Step 5: Launch the Dashboard
