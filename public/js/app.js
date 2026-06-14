@@ -583,27 +583,27 @@ function showApiKeyModal(allowCancel = true) {
         <h3 class="text-sm font-semibold tracking-wider font-mono text-zinc-100 uppercase">
           ${isConfigured ? 'Manage API Key' : 'Welcome to Ticket Dash'}
         </h3>
-        <p class="text-xs text-zinc-300 font-sans leading-relaxed">
+        <p class="text-xs text-zinc-400 font-sans leading-relaxed">
           ${isConfigured ? 'Your Ticket Tailor API Key is currently configured.' : 'To display your events and attendee rosters, please configure your Ticket Tailor API Key below.'}
         </p>
       </div>
       
-      <div class="bg-[#0E0E10] border border-brandBorder/60 p-4 rounded text-left flex flex-col gap-2.5 text-[11px] text-zinc-400 font-sans leading-relaxed">
-        <div class="flex gap-2">
-          <span class="text-emerald-400 font-bold font-mono">🔒 SECURE BY DESIGN:</span>
-          <span>Your API key is processed in transit and saved <strong>only</strong> in your browser's local storage. It is never sent to a database or stored on our servers.</span>
+      <div class="bg-[#0E0E10] border border-brandBorder/60 p-4 rounded text-left flex flex-col gap-3 text-xs leading-normal">
+        <div>
+          <h4 class="text-[10px] font-bold tracking-wider text-emerald-400 uppercase font-mono mb-0.5">Secure Local Storage</h4>
+          <p class="text-zinc-400 text-[11px]">Your API key is saved only in your browser's private storage. It is never stored or cached on our servers.</p>
         </div>
-        <div class="flex gap-2 border-t border-brandBorder/40 pt-2.5">
-          <span class="text-zinc-200 font-bold font-mono">💻 RUN ON-DEVICE:</span>
-          <span>For maximum security, you can run this app entirely on-device! View the open-source code at our <a href="https://github.com/Mason363/Ticket-Dash" target="_blank" class="text-zinc-200 underline font-semibold hover:text-white">GitHub Repository</a>.</span>
+        <div class="border-t border-brandBorder/40 pt-2.5">
+          <h4 class="text-[10px] font-bold tracking-wider text-zinc-200 uppercase font-mono mb-0.5">Run on Your Machine</h4>
+          <p class="text-zinc-400 text-[11px]">For maximum security, you can run this app entirely on-device! View the source code on <a href="https://github.com/Mason363/Ticket-Dash" target="_blank" class="text-zinc-200 underline font-semibold hover:text-white">GitHub</a>.</p>
         </div>
-        <div class="flex gap-2 border-t border-brandBorder/40 pt-2.5">
-          <span class="text-rose-400 font-bold font-mono">⚠️ WARNING:</span>
-          <span>Only configure your API key here if you are the only one with access to this computer. <strong>Never</strong> use this hosted version on shared or public machines.</span>
+        <div class="border-t border-brandBorder/40 pt-2.5">
+          <h4 class="text-[10px] font-bold tracking-wider text-rose-400 uppercase font-mono mb-0.5">Private Devices Only</h4>
+          <p class="text-zinc-400 text-[11px]">Only enter your key if you are the only one with access to this computer. Never use this hosted version on shared or public machines.</p>
         </div>
-        <div class="flex gap-2 border-t border-brandBorder/40 pt-2.5">
-          <span class="text-zinc-300 font-mono">🔑 VIEW RESTRICTION:</span>
-          <span>You can change or delete your key at any time. For security reasons, you will <strong>never</strong> be able to view the full key again here after saving (only the last two characters will be shown).</span>
+        <div class="border-t border-brandBorder/40 pt-2.5">
+          <h4 class="text-[10px] font-bold tracking-wider text-zinc-300 uppercase font-mono mb-0.5">Key Visibility Control</h4>
+          <p class="text-zinc-400 text-[11px]">You can change or delete your key at any time. After saving, the full key is hidden (only the last two characters will be shown) for security.</p>
         </div>
       </div>
 
@@ -626,12 +626,15 @@ function showApiKeyModal(allowCancel = true) {
           </div>
         </div>
       ` : `
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 mt-1 text-left">
+          <label for="setup-api-key-input" class="text-left text-[10px] font-bold tracking-wider text-zinc-200 uppercase font-mono pl-1">
+            Configure Ticket Tailor API Key
+          </label>
           <input 
             type="password" 
             id="setup-api-key-input" 
-            placeholder="Paste your api_key..." 
-            class="w-full bg-[#0E0E10] border border-brandBorder rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
+            placeholder="Paste your api_key here..." 
+            class="w-full bg-[#161619] border-2 border-brandBorderActive rounded px-3.5 py-2.5 text-xs text-zinc-100 placeholder-zinc-700 font-mono focus:outline-none focus:border-zinc-300 transition-colors shadow-inner"
           >
           <div class="text-[10px] text-zinc-500 font-sans text-left leading-normal flex flex-col gap-1 pl-1">
             <span>1. Go to your Ticket Tailor Dashboard.</span>
