@@ -564,14 +564,7 @@ function formatDate(timestamp) {
   return `${y}-${m}-${d}`;
 }
 
-function checkApiKeySetup(apiConfigured) {
-  const localKey = localStorage.getItem('ticket_tailor_api_key');
-  if (apiConfigured || localKey) {
-    const keyPanel = document.getElementById('api-key-setup-overlay');
-    if (keyPanel) keyPanel.classList.add('hidden');
-    return;
-  }
-
+function showApiKeyModal(allowCancel = true) {
   let overlay = document.getElementById('api-key-setup-overlay');
   if (!overlay) {
     overlay = document.createElement('div');
@@ -580,12 +573,18 @@ function checkApiKeySetup(apiConfigured) {
     document.body.appendChild(overlay);
   }
 
+  const localKey = localStorage.getItem('ticket_tailor_api_key');
+  const isConfigured = !!localKey;
+  const lastTwo = isConfigured ? localKey.slice(-2) : '';
+
   overlay.innerHTML = `
     <div class="bg-brandCard border border-brandBorder p-6 rounded shadow-2xl max-w-lg w-full mx-4 flex flex-col gap-4 text-center">
       <div class="flex flex-col gap-1.5">
-        <h3 class="text-sm font-semibold tracking-wider font-mono text-zinc-100 uppercase">Welcome to Ticket Dash</h3>
+        <h3 class="text-sm font-semibold tracking-wider font-mono text-zinc-100 uppercase">
+          ${isConfigured ? 'Manage API Key' : 'Welcome to Ticket Dash'}
+        </h3>
         <p class="text-xs text-zinc-300 font-sans leading-relaxed">
-          To display your events and attendee rosters, please configure your Ticket Tailor API Key below.
+          ${isConfigured ? 'Your Ticket Tailor API Key is currently configured.' : 'To display your events and attendee rosters, please configure your Ticket Tailor API Key below.'}
         </p>
       </div>
       
@@ -607,64 +606,131 @@ function checkApiKeySetup(apiConfigured) {
           <span>You can change or delete your key at any time. For security reasons, you will <strong>never</strong> be able to view the full key again here after saving (only the last two characters will be shown).</span>
         </div>
       </div>
-      
-      <div class="flex flex-col gap-2">
-        <input 
-          type="password" 
-          id="setup-api-key-input" 
-          placeholder="Paste your api_key..." 
-          class="w-full bg-[#0E0E10] border border-brandBorder rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
-        >
-        <div class="text-[10px] text-zinc-500 font-sans text-left leading-normal flex flex-col gap-1 pl-1">
-          <span>1. Go to your Ticket Tailor Dashboard.</span>
-          <span>2. Navigate to <strong>Settings</strong> -> <strong>API keys</strong>.</span>
-          <span>3. Create a read-only key with <strong>Events</strong>, <strong>Orders</strong>, and <strong>Issued Tickets</strong> checked.</span>
+
+      ${isConfigured ? `
+        <div class="flex items-center justify-between bg-[#0E0E10] border border-brandBorder rounded px-3 py-2 text-xs text-left">
+          <span class="text-zinc-400 font-mono">Active Key: ••••••••••••••${lastTwo}</span>
+          <div class="flex gap-2">
+            <button 
+              id="setup-change-key-btn" 
+              class="px-2.5 py-1 rounded bg-zinc-800 text-zinc-200 border border-brandBorder font-mono text-[10px] hover:bg-zinc-700 transition-colors uppercase cursor-pointer"
+            >
+              Change Key
+            </button>
+            <button 
+              id="setup-delete-key-btn" 
+              class="px-2.5 py-1 rounded bg-rose-950/80 border border-rose-900/60 text-rose-300 font-mono text-[10px] hover:bg-rose-900 transition-colors uppercase cursor-pointer"
+            >
+              Delete Key
+            </button>
+          </div>
         </div>
+      ` : `
+        <div class="flex flex-col gap-2">
+          <input 
+            type="password" 
+            id="setup-api-key-input" 
+            placeholder="Paste your api_key..." 
+            class="w-full bg-[#0E0E10] border border-brandBorder rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
+          >
+          <div class="text-[10px] text-zinc-500 font-sans text-left leading-normal flex flex-col gap-1 pl-1">
+            <span>1. Go to your Ticket Tailor Dashboard.</span>
+            <span>2. Navigate to <strong>Settings</strong> -> <strong>API keys</strong>.</span>
+            <span>3. Create a read-only key with <strong>Events</strong>, <strong>Orders</strong>, and <strong>Issued Tickets</strong> checked.</span>
+          </div>
+        </div>
+      `}
+      
+      <div class="flex gap-3 mt-2">
+        ${!isConfigured ? `
+          <button 
+            id="save-setup-key-btn" 
+            class="flex-grow py-2 rounded bg-zinc-100 text-zinc-950 font-mono text-xs font-semibold hover:bg-zinc-200 transition-colors uppercase cursor-pointer"
+          >
+            Save Key & Load Roster
+          </button>
+        ` : ''}
+
+        ${(allowCancel || isConfigured) ? `
+          <button 
+            id="cancel-setup-key-btn" 
+            class="flex-grow py-2 rounded bg-zinc-800 text-zinc-400 border border-brandBorder font-mono text-xs hover:bg-zinc-700 hover:text-zinc-200 transition-colors uppercase cursor-pointer"
+          >
+            Close
+          </button>
+        ` : ''}
       </div>
       
-      <button 
-        id="save-setup-key-btn" 
-        class="w-full py-2 rounded bg-zinc-100 text-zinc-950 font-mono text-xs font-semibold hover:bg-zinc-200 transition-colors uppercase cursor-pointer"
-      >
-        Save Key & Load Roster
-      </button>
-      
-      <button 
-        id="run-demo-btn" 
-        class="text-[10px] text-zinc-500 hover:text-zinc-300 font-mono transition-colors cursor-pointer hover:underline uppercase self-center"
-      >
-        Or, Run Demo Sandbox Mode
-      </button>
+      ${!isConfigured ? `
+        <button 
+          id="run-demo-btn" 
+          class="text-[10px] text-zinc-500 hover:text-zinc-300 font-mono transition-colors cursor-pointer hover:underline uppercase self-center mt-1"
+        >
+          Or, Run Demo Sandbox Mode
+        </button>
+      ` : ''}
     </div>
   `;
   overlay.classList.remove('hidden');
 
-  const saveBtn = document.getElementById('save-setup-key-btn');
-  const input = document.getElementById('setup-api-key-input');
-  const demoBtn = document.getElementById('run-demo-btn');
+  if (!isConfigured) {
+    const saveBtn = document.getElementById('save-setup-key-btn');
+    const input = document.getElementById('setup-api-key-input');
+    const demoBtn = document.getElementById('run-demo-btn');
 
-  saveBtn.addEventListener('click', async () => {
-    const key = input.value.trim();
-    if (!key) {
-      showToast('Please enter an API key.', 'error');
-      return;
-    }
-    localStorage.setItem('ticket_tailor_api_key', key);
-    overlay.classList.add('hidden');
-    showToast('API Key saved locally. Loading rosters...');
-    await fetchTickets();
-  });
+    saveBtn.addEventListener('click', async () => {
+      const key = input.value.trim();
+      if (!key) {
+        showToast('Please enter an API key.', 'error');
+        return;
+      }
+      localStorage.setItem('ticket_tailor_api_key', key);
+      overlay.classList.add('hidden');
+      showToast('API Key saved locally. Loading rosters...');
+      await fetchTickets();
+    });
 
-  input.addEventListener('keydown', async (e) => {
-    if (e.key === 'Enter') {
-      saveBtn.click();
-    }
-  });
+    input.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        saveBtn.click();
+      }
+    });
 
-  demoBtn.addEventListener('click', () => {
-    overlay.classList.add('hidden');
-    showToast('Running in Demo mode.');
-  });
+    demoBtn.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      showToast('Running in Demo mode.');
+    });
+  } else {
+    document.getElementById('setup-change-key-btn').addEventListener('click', () => {
+      localStorage.removeItem('ticket_tailor_api_key');
+      showApiKeyModal(allowCancel);
+    });
+
+    document.getElementById('setup-delete-key-btn').addEventListener('click', () => {
+      localStorage.removeItem('ticket_tailor_api_key');
+      localStorage.removeItem('ticket_dash_local_imports');
+      overlay.classList.add('hidden');
+      showToast('API Key and local data deleted. Reloading...');
+      location.reload();
+    });
+  }
+
+  const cancelBtn = document.getElementById('cancel-setup-key-btn');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+    });
+  }
+}
+
+function checkApiKeySetup(apiConfigured) {
+  const localKey = localStorage.getItem('ticket_tailor_api_key');
+  if (apiConfigured || localKey) {
+    const keyPanel = document.getElementById('api-key-setup-overlay');
+    if (keyPanel) keyPanel.classList.add('hidden');
+    return;
+  }
+  showApiKeyModal(false);
 }
 
 function injectAboutKeyPanel() {
@@ -2839,6 +2905,14 @@ function initEvents() {
       if (e.target === removeImportsModal) {
         removeImportsModal.classList.add('hidden');
       }
+    });
+  }
+
+  // API Key Configuration Button
+  const apiKeyConfigBtn = document.getElementById('api-key-config-btn');
+  if (apiKeyConfigBtn) {
+    apiKeyConfigBtn.addEventListener('click', () => {
+      showApiKeyModal(true);
     });
   }
 
