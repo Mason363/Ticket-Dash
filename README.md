@@ -1,113 +1,103 @@
-# Ticket Dash
+# Ticket Dash 🎟️
 
-A lightweight, high-performance, read-only event dashboard and attendee doorlist viewer. Ticket Dash lets you browse, filter, search, segment, and export your ticket sales and check-in rosters using an Obsidian/Linear-style command line interface.
+Ticket Dash is a lightweight, read-only event dashboard and attendee roster viewer. It connects directly to your Ticket Tailor account (or loads local CSV spreadsheets) to show all your ticket sales, order details, and check-in statuses in one fast, beautiful grid.
 
-Built to run locally, Ticket Dash keeps your ticketing data secure by caching records strictly in-memory or in local CSV imports—no databases, zero data leakage, completely secure.
-
----
-
-## Features
-
-- **Obsidian/Linear Command Palette**: Trigger powerful filters, table sorts, and stats summaries by typing `/` in the search input.
-- **Fuzzy Search Modifiers**: Search by specific fields like `email:user@domain.com`, `minspend:100`, or `stars:***`.
-- **Attendee Merging**: Automatically aggregates duplicate attendee emails to calculate customer lifetime spend, event check-in history, and loyalty/activity ratings.
-- **Compact Merged Fields**: Cells with multiple values auto-collapse into a single row containing a clickable `+N more` button to save vertical space.
-- **Local CSV Imports**: Import lists on the fly from local CSV doorsheets.
-- **Statistical Overlays**: Visual modals showing visible revenue summaries, popular ticket tiers, attendance check-in metrics, and event sales distributions.
-- **Advanced Exports**: Instantly copy BCC email strings, visible phone numbers, or download custom-column layouts as CSV or JSON.
+Unlike complex database systems, Ticket Dash keeps your ticketing data private and secure by caching all records strictly **in-memory** on your local machine.
 
 ---
 
-## Quick Start
+## 🚀 Easy Setup Guide (For Everyone)
 
-### 1. Prerequisites
-- **Node.js** (v18 or higher recommended)
-- Optional: A **Ticket Tailor API Key** (if not provided, Ticket Dash defaults to Demo mode with sample sandbox data).
+You don't need to be a developer to get Ticket Dash running. Follow these simple steps:
 
-### 2. Installation
-Clone or download the project folder, then install dependencies:
-```bash
-npm install
-```
+### Step 1: Download the App
+Click the green **"Code"** button at the top right of this GitHub page and select **"Download ZIP"**. Extract (unzip) the downloaded folder to a location on your computer.
 
-### 3. Environment Setup
-Duplicate the example environment file and add your Ticket Tailor API key:
-```bash
-cp .env.example .env
-```
-Open `.env` in a text editor and populate the key:
-```env
-TICKET_TAILOR_API_KEY=your_api_key_here
-PORT=3005
-```
+### Step 2: Install Node.js
+Ticket Dash runs on Node.js. 
+1. Go to [nodejs.org](https://nodejs.org/).
+2. Download the installer labeled **LTS** (Recommended for most users).
+3. Open the downloaded file and click through the installer to finish.
 
-### 4. Launch the App
-Start the local Node server:
-```bash
-npm start
-```
-Open your browser and navigate to: **`http://localhost:3005`**
+### Step 3: Setup your API Key
+To fetch your live ticket data, Ticket Dash needs your Ticket Tailor API key.
+1. Rename the file `.env.example` in the folder to `.env`.
+2. Open `.env` in any text editor (like Notepad on Windows or TextEdit on Mac).
+3. Put your API key next to the `=` sign (e.g., `TICKET_TAILOR_API_KEY=your_key_here`). Save and close the file.
+*(Note: If you leave this blank, the app will run in **Demo Mode** with sample events and tickets so you can still try it out).*
 
----
+### Step 4: Launch Ticket Dash
+1. Open your computer's terminal:
+   - **Mac**: Press `Cmd + Space`, type `Terminal`, and press Enter.
+   - **Windows**: Press the Windows Key, type `cmd`, and press Enter.
+2. Type `cd ` (with a space after it), then drag-and-drop the unzipped folder from your file manager directly into the terminal window, and press Enter.
+3. Install the app by typing this command and pressing Enter:
+   ```bash
+   npm install
+   ```
+4. Start the app by typing this command and pressing Enter:
+   ```bash
+   npm start
+   ```
 
-## Commands Cheat Sheet
-
-Type `/` in the search box to view, autocomplete, and toggle these options:
-
-| Command | Type | Description |
-| :--- | :--- | :--- |
-| `/help` | Action | Opens the interactive command help cheat sheet. |
-| `/show revenue` | Action | Displays total revenue, filtered count, and AOV. |
-| `/show checkin rate` | Action | Displays real-time check-in stats and percentage. |
-| `/show top events` | Action | Displays ticket counts and revenue ranks per event. |
-| `/show tier stats` | Action | Displays ticket distributions and revenues per tier. |
-| `/copy bcc` | Action | Copies BCC-formatted string of visible valid emails. |
-| `/copy phones` | Action | Copies comma-separated list of visible phone numbers. |
-| `/export csv` | Action | Downloads currently visible table rows as a CSV file. |
-| `/export json` | Action | Downloads currently visible table rows as a JSON file. |
-| `/toggle gridlines` | Toggle | Toggles table grid borders. |
-| `/toggle full names` | Toggle | Merges First Name and Last Name columns. |
-| `/toggle theme` | Action | Swaps light/dark themes. |
-| `/set density [high/medium/low]` | Action | Autocompletes padding adjustments. |
-| `/highlight recent` | Toggle | Highlights tickets purchased in the last 24 hours. |
-| `/unhide all` | Action | Restores manually hidden rows. |
-| `/invert selection` | Action | Swaps visible rows with hidden rows. |
-| `/keep visible` | Action | Hides all rows except the currently visible ones. |
-| `/refresh` | Action | Triggers a fresh background sync from the provider API. |
+### Step 5: Open the Dashboard
+Open your web browser (Chrome, Safari, Edge, etc.) and type this address in the URL bar:
+👉 **`http://localhost:3005`**
 
 ---
 
-## Git & GitHub Setup
+## ⌨️ How to Use Slash (/) Commands
 
-Follow these steps to track your dashboard and push it to a public GitHub repository.
+To trigger filters, statistics, styling, or exports, simply click on the **Search Bar** and type **`/`** to pull up the interactive command menu. 
 
-### 1. Initialize Git
-From the project root directory, run:
-```bash
-git init
-```
+Here is the complete list of every available command:
 
-### 2. Verify Ignored Files
-Ensure that Node dependencies, local environments, and private imported doorlists are not tracked:
-```bash
-git status
-```
-*(Confirms that `node_modules/`, `.env`, and private JSON files in `imports/` are correctly ignored by `.gitignore`).*
+### 📊 Reports & Statistics (Opens in a Modal)
+* **`/show revenue`** (Aliases: `/total sales`, `/revenue stats`): View total sales revenue, ticket count, and average order value.
+* **`/show checkin rate`** (Aliases: `/attendance`, `/checkin stats`): See the percentage and count of attendees checked in.
+* **`/show top events`** (Aliases: `/event ranks`, `/sales by event`): View ticket sales and revenue rankings per event.
+* **`/show tier stats`** (Aliases: `/ticket ranks`, `/popular tiers`): View total sales and revenue broken down by ticket type (VIP, General Admission, etc.).
 
-### 3. Create First Commit
-Stage and commit the project assets:
-```bash
-git add .
-git commit -m "Initial commit: Ticket Dash setup"
-```
+### 📋 Copying & Exporting
+* **`/copy bcc`** (Aliases: `/copy bcc list`, `/get emails`): Copies a clean list of all visible valid email addresses separated by commas to your clipboard. Perfect for pasting into your email client's BCC field to send updates.
+* **`/copy phones`** (Aliases: `/copy phone list`, `/get phones`): Copies a list of all visible phone numbers.
+* **`/export csv`** (Aliases: `/download csv`, `/save csv`): Downloads the current visible table view as a CSV spreadsheet.
+* **`/export json`** (Aliases: `/download json`, `/save json`): Downloads the visible table view as a JSON file.
+* **`/copy visible row`** (Aliases: `/copy row`, `/copy current`): Copies the cell data of the first visible row in the table.
 
-### 4. Create Public GitHub Repo & Push
-1. Go to your [GitHub account](https://github.com/) and click **New Repository**.
-2. Name the repository **`ticket-dash`**.
-3. Choose **Public**, leave "Add a README" and "Add .gitignore" **unchecked** (since they are already present locally), and click **Create repository**.
-4. Link and push your branch:
-```bash
-git branch -M main
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/ticket-dash.git
-git push -u origin main
-```
+### 🎨 Table Styles & Formatting
+* **`/toggle gridlines`** (Aliases: `/grid`, `/borders`, `/table grid`): Toggles distinct borders between cells for easier reading.
+* **`/toggle case format`** (Aliases: `/standardize names`, `/title case`, `/fix casing`): Automatically fixes messy uppercase/lowercase names to Title Case (e.g. converting "JOHN SMITH" to "John Smith").
+* **`/toggle theme`** (Aliases: `/theme`, `/dark mode`, `/light mode`): Swaps between Dark and Light mode themes.
+* **`/toggle full names`** (Aliases: `/merge names`, `/one name column`): Collapses the First Name and Last Name headers into a single "Name" column.
+* **`/set density [high/medium/low]`** (Aliases: `/density`, `/padding`, `/row height`): Adjusts row height spacing.
+* **`/highlight recent`** (Aliases: `/new tickets`, `/highlight new`): Applies a yellow highlight border to rows purchased within the last 24 hours.
+* **`/compact rows`** (Aliases: `/condense`, `/collapse cells`, `/truncate cells`): Toggles cell collapsing. When on (default), rows with multiple bookings collapse to show `+N more` instead of expanding vertically.
+
+### 🔍 Filtering & Audience Segmentation
+* **`/show repeat buyers`** (Aliases: `/repeats`, `/loyal`, `/multi-buyers`): Shows only attendees who have purchased tickets to 2 or more different events.
+* **`/show domain [domain]`** (Aliases: `/domain`, `/email domain`): Filters to show only emails matching a domain (e.g. `/show domain gmail.com`).
+* **`/hide domain [domain]`** (Aliases: `/ignore domain`, `/exclude domain`): Filters out specific email domains.
+* **`/show multi-ticket orders`** (Aliases: `/bulk orders`, `/group bookings`): Shows bookings that bought more than 1 ticket.
+* **`/show incomplete names`** (Aliases: `/bad names`, `/short names`, `/initials`): Flags rows where names are blank or just a single letter.
+* **`/show missing phone`** (Aliases: `/no phone`, `/empty phone`): Shows attendees with no phone numbers.
+* **`/show local phone [prefix]`** (Aliases: `/local`, `/area code`): Filters phone numbers by area code or prefix.
+* **`/show ticket range [min] [max]`** (Aliases: `/price range`, `/ticket price`): Shows tickets within a specific price range.
+* **`/show free tickets`** (Aliases: `/free`, `/comps`): Shows $0.00 tickets.
+* **`/hide admin orders`** (Aliases: `/admin`, `/staff`, `/management`): Filters out administrative/internal tickets.
+* **`/show checked-in only`** (Aliases: `/checked`, `/checkedin`, `/present`): Shows checked-in attendees only.
+* **`/show unchecked only`** (Aliases: `/unchecked`, `/absent`): Shows unchecked attendees only.
+* **`/show valid emails only`** (Aliases: `/valid`, `/clean`, `/real`): Hides malformed or dummy emails.
+* **`/hide test orders`** (Aliases: `/test`, `/sandbox`, `/fake`): Filters out test/sandbox purchases.
+* **`/hide void orders`** (Aliases: `/void`, `/cancelled`, `/refunded`): Filters out refunded or void tickets.
+* **`/hide duplicates`** (Aliases: `/hide repeats`, `/merge`): Groups duplicate emails into single rows.
+* **`/hide row [name]`** (Aliases: `/hiderow`, `/deleterow`): Hides a specific row from view.
+* **`/hide by rule [option] [values]`** (Aliases: `/hidebyrule`, `/rule_hide`): Bulk-hides rows by rules (e.g., `/hide by rule email user1@gmail.com user2@gmail.com`).
+
+### 🛠️ Utilities
+* **`/unhide all`** (Aliases: `/restore rows`, `/show hidden rows`): Restores all manually hidden rows.
+* **`/invert selection`** (Aliases: `/invert hide`, `/reverse select`): Swaps hidden vs visible rows.
+* **`/keep visible`** (Aliases: `/only visible`, `/crop list`): Hides all rows that do not match the current search.
+* **`/refresh`** (Aliases: `/sync now`, `/reload data`): Triggers a fresh background sync from Ticket Tailor.
+* **`/toggle column [col_name]`** (Aliases: `/col`): Show or hide a specific column (e.g. `/toggle column phone`).
+* **`/help`** (Aliases: `/commands`, `/cheat sheet`): Opens the interactive overlay cheat sheet.
