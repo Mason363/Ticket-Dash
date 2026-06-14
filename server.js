@@ -336,7 +336,85 @@ function loadImportedTickets() {
   }
 }
 
-app.get('/api/tickets', (req, res) => {
+async function fetchTicketsWithKey(apiKey) {
+  const events = await fetchAllPages('events', apiKey);
+  const eventMap = {};
+  events.forEach(event => {
+    eventMap[event.id] = event.name;
+  });
+
+  const orders = await fetchAllPages('orders', apiKey);
+  const orderMap = {};
+  orders.forEach(order => {
+    orderMap[order.id] = order;
+  });
+
+  const issuedTickets = await fetchAllPages('issued_tickets', apiKey);
+
+  return issuedTickets.map(ticket => {
+    const order = orderMap[ticket.order_id];
+    let buyerNameStr = '';
+    let emailVal = ticket.email || '';
+    let phoneVal = '';
+    let purchaseDate = ticket.created_at;
+    
+    if (order && order.buyer_details) {
+      buyerNameStr = order.buyer_details.name || '';
+      if (!buyerNameStr) {
+        buyerNameStr = `${order.buyer_details.first_name || ''} ${order.buyer_details.last_name || ''}`.trim();
+      }
+      emailVal = order.buyer_details.email || emailVal;
+      phoneVal = order.buyer_details.phone || '';
+      purchaseDate = order.created_at;
+    }
+
+    if (!buyerNameStr) {
+      buyerNameStr = ticket.full_name || '';
+      if (!buyerNameStr) {
+        buyerNameStr = `${ticket.first_name || ''} ${ticket.last_name || ''}`.trim();
+      }
+    }
+
+    const parsed = parseName(buyerNameStr);
+    const isEmailValid = isValidEmail(emailVal);
+    const multiplier = ticket.listed_currency?.base_multiplier || 100;
+    const priceVal = (ticket.listed_price !== undefined && ticket.listed_price !== null)
+      ? ticket.listed_price / multiplier
+      : 0;
+
+    return {
+      ticket_id: ticket.id,
+      first_name: parsed.firstName,
+      last_name: parsed.lastName,
+      email: emailVal,
+      is_email_valid: isEmailValid,
+      phone: phoneVal,
+      event_name: eventMap[ticket.event_id] || 'Unknown Event',
+      ticket_type: ticket.name,
+      price: priceVal,
+      order_id: ticket.order_id,
+      purchase_date: purchaseDate,
+      checked_in: ticket.status === 'checked_in'
+    };
+  });
+}
+
+app.get('/api/tickets', async (req, res) => {
+  const clientApiKey = req.headers['x-api-key'];
+  if (clientApiKey) {
+    try {
+      const data = await fetchTicketsWithKey(clientApiKey);
+      return res.json({
+        tickets: data,
+        api_key_configured: true,
+        is_demo: false,
+        last_synced: new Date().toISOString()
+      });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message || 'Failed to fetch tickets' });
+    }
+  }
+
   const apiConfigured = isApiKeyConfigured();
   const importedTickets = loadImportedTickets();
   const combinedTickets = [...inMemoryCache.tickets, ...importedTickets];
@@ -381,6 +459,28 @@ app.delete('/api/remove-imports', (req, res) => {
 });
 
 app.all('/api/sync', async (req, res) => {
+  const clientApiKey = req.headers['x-api-key'];
+  if (clientApiKey) {
+    try {
+      const data = await fetchTicketsWithKey(clientApiKey);
+      return res.json({
+        success: true,
+        message: 'Sync completed successfully from your browser key.',
+        count: data.length,
+        last_synced: new Date().toISOString(),
+        is_demo: false,
+        last_error: null
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Synchronization failed.',
+        is_demo: false,
+        last_synced: null
+      });
+    }
+  }
+
   try {
     const data = await performInMemorySync();
     res.json({
@@ -422,9 +522,13 @@ if (isApiKeyConfigured()) {
   };
 }
 
-app.listen(PORT, () => {
-  console.log(`===================================================`);
-  console.log(`Ticket Tailor Read-Only Dashboard Running Locally`);
-  console.log(`Server Address: http://localhost:${PORT}`);
-  console.log(`===================================================`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`===================================================`);
+    console.log(`Ticket Tailor Read-Only Dashboard Running Locally`);
+    console.log(`Server Address: http://localhost:${PORT}`);
+    console.log(`===================================================`);
+  });
+}
+
+export default app;

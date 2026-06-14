@@ -2,3 +2,4 @@ node_modules/
 imports/*.json
 .DS_Store
 *.psd
+.vercel

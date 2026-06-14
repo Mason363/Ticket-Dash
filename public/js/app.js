@@ -564,9 +564,244 @@ function formatDate(timestamp) {
   return `${y}-${m}-${d}`;
 }
 
+function checkApiKeySetup(apiConfigured) {
+  const localKey = localStorage.getItem('ticket_tailor_api_key');
+  if (apiConfigured || localKey) {
+    const keyPanel = document.getElementById('api-key-setup-overlay');
+    if (keyPanel) keyPanel.classList.add('hidden');
+    return;
+  }
+
+  let overlay = document.getElementById('api-key-setup-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'api-key-setup-overlay';
+    overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm';
+    document.body.appendChild(overlay);
+  }
+
+  overlay.innerHTML = `
+    <div class="bg-brandCard border border-brandBorder p-6 rounded shadow-2xl max-w-lg w-full mx-4 flex flex-col gap-4 text-center">
+      <div class="flex flex-col gap-1.5">
+        <h3 class="text-sm font-semibold tracking-wider font-mono text-zinc-100 uppercase">Welcome to Ticket Dash</h3>
+        <p class="text-xs text-zinc-300 font-sans leading-relaxed">
+          To display your events and attendee rosters, please configure your Ticket Tailor API Key below.
+        </p>
+      </div>
+      
+      <div class="bg-[#0E0E10] border border-brandBorder/60 p-4 rounded text-left flex flex-col gap-2.5 text-[11px] text-zinc-400 font-sans leading-relaxed">
+        <div class="flex gap-2">
+          <span class="text-emerald-400 font-bold font-mono">🔒 SECURE BY DESIGN:</span>
+          <span>Your API key is processed in transit and saved <strong>only</strong> in your browser's local storage. It is never sent to a database or stored on our servers.</span>
+        </div>
+        <div class="flex gap-2 border-t border-brandBorder/40 pt-2.5">
+          <span class="text-zinc-200 font-bold font-mono">💻 RUN ON-DEVICE:</span>
+          <span>For maximum security, you can run this app entirely on-device! View the open-source code at our <a href="https://github.com/Mason363/Ticket-Dash" target="_blank" class="text-zinc-200 underline font-semibold hover:text-white">GitHub Repository</a>.</span>
+        </div>
+        <div class="flex gap-2 border-t border-brandBorder/40 pt-2.5">
+          <span class="text-rose-400 font-bold font-mono">⚠️ WARNING:</span>
+          <span>Only configure your API key here if you are the only one with access to this computer. <strong>Never</strong> use this hosted version on shared or public machines.</span>
+        </div>
+        <div class="flex gap-2 border-t border-brandBorder/40 pt-2.5">
+          <span class="text-zinc-300 font-mono">🔑 VIEW RESTRICTION:</span>
+          <span>You can change or delete your key at any time. For security reasons, you will <strong>never</strong> be able to view the full key again here after saving (only the last two characters will be shown).</span>
+        </div>
+      </div>
+      
+      <div class="flex flex-col gap-2">
+        <input 
+          type="password" 
+          id="setup-api-key-input" 
+          placeholder="Paste your api_key..." 
+          class="w-full bg-[#0E0E10] border border-brandBorder rounded px-3 py-2 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
+        >
+        <div class="text-[10px] text-zinc-500 font-sans text-left leading-normal flex flex-col gap-1 pl-1">
+          <span>1. Go to your Ticket Tailor Dashboard.</span>
+          <span>2. Navigate to <strong>Settings</strong> -> <strong>API keys</strong>.</span>
+          <span>3. Create a read-only key with <strong>Events</strong>, <strong>Orders</strong>, and <strong>Issued Tickets</strong> checked.</span>
+        </div>
+      </div>
+      
+      <button 
+        id="save-setup-key-btn" 
+        class="w-full py-2 rounded bg-zinc-100 text-zinc-950 font-mono text-xs font-semibold hover:bg-zinc-200 transition-colors uppercase cursor-pointer"
+      >
+        Save Key & Load Roster
+      </button>
+      
+      <button 
+        id="run-demo-btn" 
+        class="text-[10px] text-zinc-500 hover:text-zinc-300 font-mono transition-colors cursor-pointer hover:underline uppercase self-center"
+      >
+        Or, Run Demo Sandbox Mode
+      </button>
+    </div>
+  `;
+  overlay.classList.remove('hidden');
+
+  const saveBtn = document.getElementById('save-setup-key-btn');
+  const input = document.getElementById('setup-api-key-input');
+  const demoBtn = document.getElementById('run-demo-btn');
+
+  saveBtn.addEventListener('click', async () => {
+    const key = input.value.trim();
+    if (!key) {
+      showToast('Please enter an API key.', 'error');
+      return;
+    }
+    localStorage.setItem('ticket_tailor_api_key', key);
+    overlay.classList.add('hidden');
+    showToast('API Key saved locally. Loading rosters...');
+    await fetchTickets();
+  });
+
+  input.addEventListener('keydown', async (e) => {
+    if (e.key === 'Enter') {
+      saveBtn.click();
+    }
+  });
+
+  demoBtn.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+    showToast('Running in Demo mode.');
+  });
+}
+
+function injectAboutKeyPanel() {
+  const aboutModalInner = document.querySelector('#about-modal > div');
+  if (aboutModalInner) {
+    let panel = document.getElementById('about-api-key-panel');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'about-api-key-panel';
+      panel.className = 'mt-3 pt-3 border-t border-brandBorder/60 flex flex-col gap-2 text-left';
+      const closeBtn = document.getElementById('close-about-btn');
+      aboutModalInner.insertBefore(panel, closeBtn);
+    }
+    
+    const localKey = localStorage.getItem('ticket_tailor_api_key');
+    if (localKey) {
+      const lastTwo = localKey.slice(-2);
+      panel.innerHTML = `
+        <div class="flex flex-col gap-1 text-left">
+          <span class="text-[9px] uppercase tracking-wider text-brandSubtext font-mono">Hosted API Configuration</span>
+          <div class="flex items-center justify-between bg-[#0E0E10] border border-brandBorder rounded px-3 py-2 text-xs">
+            <span class="text-zinc-400 font-mono">Active Key: ••••••••••••••${lastTwo}</span>
+            <div class="flex gap-2">
+              <button 
+                id="change-about-key-btn" 
+                class="px-2 py-1 rounded bg-zinc-800 text-zinc-200 border border-brandBorder font-mono text-[9px] hover:bg-zinc-700 transition-colors uppercase cursor-pointer"
+              >
+                Change
+              </button>
+              <button 
+                id="clear-about-key-btn" 
+                class="px-2 py-1 rounded bg-rose-950/80 border border-rose-900/60 text-rose-300 font-mono text-[9px] hover:bg-rose-900 transition-colors uppercase cursor-pointer"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <span class="text-[9px] text-zinc-500 font-sans mt-0.5 leading-normal">Note: The full key is hidden for security and cannot be viewed.</span>
+        </div>
+      `;
+      
+      document.getElementById('change-about-key-btn').addEventListener('click', () => {
+        panel.innerHTML = `
+          <div class="flex flex-col gap-1.5 text-left">
+            <span class="text-[9px] uppercase tracking-wider text-brandSubtext font-mono">Update API Key</span>
+            <div class="flex items-center gap-2">
+              <input 
+                type="password" 
+                id="about-api-key-input" 
+                placeholder="Paste new api_key..." 
+                class="flex-grow bg-[#0E0E10] border border-brandBorder rounded px-2.5 py-1.5 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
+              >
+              <button 
+                id="save-about-key-btn" 
+                class="px-2.5 py-1.5 rounded bg-zinc-100 text-zinc-950 font-mono text-[10px] font-semibold hover:bg-zinc-200 transition-colors uppercase cursor-pointer"
+              >
+                Save
+              </button>
+              <button 
+                id="cancel-about-key-btn" 
+                class="px-2.5 py-1.5 rounded bg-zinc-800 text-zinc-400 font-mono text-[10px] hover:bg-zinc-700 transition-colors uppercase cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('save-about-key-btn').addEventListener('click', async () => {
+          const input = document.getElementById('about-api-key-input');
+          const key = input.value.trim();
+          if (!key) {
+            showToast('Please enter an API key.', 'error');
+            return;
+          }
+          localStorage.setItem('ticket_tailor_api_key', key);
+          showToast('API Key updated. Reloading...');
+          location.reload();
+        });
+        
+        document.getElementById('cancel-about-key-btn').addEventListener('click', () => {
+          injectAboutKeyPanel();
+        });
+      });
+      
+      document.getElementById('clear-about-key-btn').addEventListener('click', () => {
+        localStorage.removeItem('ticket_tailor_api_key');
+        localStorage.removeItem('ticket_dash_local_imports');
+        showToast('API Key and local data deleted. Reloading...');
+        location.reload();
+      });
+      
+    } else {
+      panel.innerHTML = `
+        <div class="flex flex-col gap-1.5 text-left">
+          <span class="text-[9px] uppercase tracking-wider text-brandSubtext font-mono">Hosted API Configuration</span>
+          <div class="flex items-center gap-2">
+            <input 
+              type="password" 
+              id="about-api-key-input" 
+              placeholder="Configure Ticket Tailor API Key..." 
+              class="flex-grow bg-[#0E0E10] border border-brandBorder rounded px-2.5 py-1.5 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
+            >
+            <button 
+              id="save-about-key-btn" 
+              class="px-2.5 py-1.5 rounded bg-zinc-100 text-zinc-950 font-mono text-[10px] font-semibold hover:bg-zinc-200 transition-colors uppercase cursor-pointer"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('save-about-key-btn').addEventListener('click', async () => {
+        const input = document.getElementById('about-api-key-input');
+        const key = input.value.trim();
+        if (!key) {
+          showToast('Please enter an API key.', 'error');
+          return;
+        }
+        localStorage.setItem('ticket_tailor_api_key', key);
+        showToast('API Key configured. Reloading...');
+        location.reload();
+      });
+    }
+  }
+}
+
 async function fetchTickets() {
   try {
-    const response = await fetch('/api/tickets');
+    const headers = {};
+    const localKey = localStorage.getItem('ticket_tailor_api_key');
+    if (localKey) {
+      headers['x-api-key'] = localKey;
+    }
+
+    const response = await fetch('/api/tickets', { headers });
     if (!response.ok) {
       throw new Error(`Failed to load data: ${response.statusText}`);
     }
@@ -574,11 +809,33 @@ async function fetchTickets() {
     const data = await response.json();
     tickets = data.tickets || [];
 
+    if (localKey) {
+      const localImportsJson = localStorage.getItem('ticket_dash_local_imports');
+      if (localImportsJson) {
+        try {
+          const localImports = JSON.parse(localImportsJson);
+          if (Array.isArray(localImports)) {
+            const importedFiltered = localImports.filter(lt => !tickets.some(t => t.ticket_id === lt.ticket_id));
+            tickets = tickets.concat(importedFiltered);
+          }
+        } catch (e) {
+          console.error('Failed to parse local imports:', e);
+        }
+      }
+    }
+
     // Precalculate activity counts, money spent, and thresholds
     calculateMetrics();
 
     populateEventFilter();
     updateSyncStatus(data);
+    
+    // Check if we need to show the API key overlay
+    checkApiKeySetup(data.api_key_configured);
+    
+    // Injects the key panel to the about modal
+    injectAboutKeyPanel();
+    
     applyFilters();
 
   } catch (error) {
@@ -1648,7 +1905,13 @@ async function triggerSync() {
   }
 
   try {
-    const response = await fetch('/api/sync', { method: 'POST' });
+    const headers = {};
+    const localKey = localStorage.getItem('ticket_tailor_api_key');
+    if (localKey) {
+      headers['x-api-key'] = localKey;
+    }
+
+    const response = await fetch('/api/sync', { method: 'POST', headers });
     const result = await response.json();
 
     if (result.success) {
@@ -1673,7 +1936,13 @@ async function triggerSync() {
 
 async function triggerAutoSync() {
   try {
-    const response = await fetch('/api/sync');
+    const headers = {};
+    const localKey = localStorage.getItem('ticket_tailor_api_key');
+    if (localKey) {
+      headers['x-api-key'] = localKey;
+    }
+
+    const response = await fetch('/api/sync', { headers });
     if (response.ok) {
       const result = await response.json();
       await fetchTickets();
@@ -2539,6 +2808,14 @@ function initEvents() {
       removeImportsModal.classList.add('hidden');
       try {
         showToast('Removing imported tickets...');
+        const localKey = localStorage.getItem('ticket_tailor_api_key');
+        if (localKey) {
+          localStorage.removeItem('ticket_dash_local_imports');
+          showToast('Permanently removed all locally imported tickets.');
+          await fetchTickets();
+          return;
+        }
+
         const response = await fetch('/api/remove-imports', {
           method: 'DELETE'
         });
@@ -2754,6 +3031,34 @@ function initEvents() {
 
           const defaultPrice = parseFloat(defaultPriceInput.value) || 0;
           const mappedTickets = mapCSVRowsToTickets(parsedRows, eventName, defaultPrice);
+
+          const localKey = localStorage.getItem('ticket_tailor_api_key');
+          if (localKey) {
+            let existingImports = [];
+            const existingImportsJson = localStorage.getItem('ticket_dash_local_imports');
+            if (existingImportsJson) {
+              try {
+                existingImports = JSON.parse(existingImportsJson);
+              } catch (e) {
+                existingImports = [];
+              }
+            }
+            const newTickets = mappedTickets.filter(nt => !existingImports.some(et => et.ticket_id === nt.ticket_id));
+            existingImports = existingImports.concat(newTickets);
+            localStorage.setItem('ticket_dash_local_imports', JSON.stringify(existingImports));
+
+            showToast(`Successfully imported ${mappedTickets.length} tickets locally.`);
+            
+            importModal.classList.add('hidden');
+            selectedFile = null;
+            fileNameDisplay.textContent = 'Click or drag & drop doorlist CSV here';
+            fileNameDisplay.classList.remove('text-zinc-200');
+            importEventNameInput.value = '';
+            defaultPriceInput.value = '0';
+            
+            fetchTickets();
+            return;
+          }
 
           showToast('Uploading imported tickets...');
           
