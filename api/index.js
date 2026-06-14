@@ -307,8 +307,12 @@ async function performInMemorySync() {
 
 // Ensure imports directory exists
 const importsDir = path.join(__dirname, '../imports');
-if (!fs.existsSync(importsDir)) {
-  fs.mkdirSync(importsDir, { recursive: true });
+try {
+  if (!fs.existsSync(importsDir)) {
+    fs.mkdirSync(importsDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn('Warning: Could not create imports directory. Local file imports will be disabled:', err.message);
 }
 
 function loadImportedTickets() {
