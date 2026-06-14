@@ -1,12 +1,12 @@
 # Ticket Dash 🎟️
 
-Ticket Dash is a lightweight, read-only event dashboard and attendee roster viewer. It connects directly to your Ticket Tailor account (or loads local CSV spreadsheets) to show all your ticket sales, order details, and check-in statuses in one fast, beautiful grid.
+Ticket Dash is a lightweight, read-only event dashboard and attendee roster viewer. It connects directly to your Ticket Tailor account (or loads local CSV files) to show all your ticket sales, order details, and check-in statuses in one fast, beautiful grid.
 
 Unlike complex database systems, Ticket Dash keeps your ticketing data private and secure by caching all records strictly **in-memory** on your local machine.
 
 ---
 
-## 🚀 Easy Setup Guide (For Everyone)
+## 🚀 Easy Setup Guide
 
 You don't need to be a developer to get Ticket Dash running. Follow these simple steps:
 
@@ -19,14 +19,24 @@ Ticket Dash runs on Node.js.
 2. Download the installer labeled **LTS** (Recommended for most users).
 3. Open the downloaded file and click through the installer to finish.
 
-### Step 3: Setup your API Key
-To fetch your live ticket data, Ticket Dash needs your Ticket Tailor API key.
-1. Rename the file `.env.example` in the folder to `.env`.
-2. Open `.env` in any text editor (like Notepad on Windows or TextEdit on Mac).
-3. Put your API key next to the `=` sign (e.g., `TICKET_TAILOR_API_KEY=your_key_here`). Save and close the file.
-*(Note: If you leave this blank, the app will run in **Demo Mode** with sample events and tickets so you can still try it out).*
+### Step 3: Get your Ticket Tailor API Key
+To fetch your live ticket data, you need to create an API key in Ticket Tailor:
+1. Log in to your **Ticket Tailor Dashboard**.
+2. Go to **Settings** -> **API keys**.
+3. Click **Create new API key**.
+4. ⚠️ **IMPORTANT (Permissions)**: When creating the key, you **must** check the **"Read-only"** boxes next to:
+   - [x] **Events** (`events`)
+   - [x] **Orders** (`orders`)
+   - [x] **Issued Tickets** (`issued_tickets`)
+5. Copy the generated API key.
 
-### Step 4: Launch Ticket Dash
+### Step 4: Configure the App
+1. Inside the unzipped Ticket Dash folder, find the file named `.env.example` and rename it to `.env`.
+2. Open `.env` in any text editor (like Notepad on Windows or TextEdit on Mac).
+3. Paste your API key next to the `=` sign (e.g., `TICKET_TAILOR_API_KEY=your_key_here`). Save and close the file.
+*(Note: If you leave this blank, the app runs in **Demo Mode** with sample events and tickets so you can still play with it).*
+
+### Step 5: Launch the Dashboard
 1. Open your computer's terminal:
    - **Mac**: Press `Cmd + Space`, type `Terminal`, and press Enter.
    - **Windows**: Press the Windows Key, type `cmd`, and press Enter.
@@ -39,42 +49,33 @@ To fetch your live ticket data, Ticket Dash needs your Ticket Tailor API key.
    ```bash
    npm start
    ```
-
-### Step 5: Open the Dashboard
-Open your web browser (Chrome, Safari, Edge, etc.) and type this address in the URL bar:
-👉 **`http://localhost:3005`**
+5. Open your web browser and go to:
+   👉 **`http://localhost:3005`**
 
 ---
 
-## ⌨️ How to Use Slash (/) Commands
+## ⌨️ Slash (/) Commands Reference
 
-To trigger filters, statistics, styling, or exports, simply click on the **Search Bar** and type **`/`** to pull up the interactive command menu. 
+To filter, format, view stats, or export your attendee roster, simply click on the **Search Bar** and type **`/`** to open the interactive command menu.
 
-Here is the complete list of every available command:
-
-### 📊 Reports & Statistics (Opens in a Modal)
+### 📊 Stats & Revenue Reports (Opens in a Modal)
 * **`/show revenue`** (Aliases: `/total sales`, `/revenue stats`): View total sales revenue, ticket count, and average order value.
 * **`/show checkin rate`** (Aliases: `/attendance`, `/checkin stats`): See the percentage and count of attendees checked in.
 * **`/show top events`** (Aliases: `/event ranks`, `/sales by event`): View ticket sales and revenue rankings per event.
 * **`/show tier stats`** (Aliases: `/ticket ranks`, `/popular tiers`): View total sales and revenue broken down by ticket type (VIP, General Admission, etc.).
 
-### 📋 Copying & Exporting
-* **`/copy bcc`** (Aliases: `/copy bcc list`, `/get emails`): Copies a clean list of all visible valid email addresses separated by commas to your clipboard. Perfect for pasting into your email client's BCC field to send updates.
-* **`/copy phones`** (Aliases: `/copy phone list`, `/get phones`): Copies a list of all visible phone numbers.
-* **`/export csv`** (Aliases: `/download csv`, `/save csv`): Downloads the current visible table view as a CSV spreadsheet.
-* **`/export json`** (Aliases: `/download json`, `/save json`): Downloads the visible table view as a JSON file.
-* **`/copy visible row`** (Aliases: `/copy row`, `/copy current`): Copies the cell data of the first visible row in the table.
+### 🔍 Attendance & Filter Rules
+* **`/show checked-in only`** (Aliases: `/checked`, `/checkedin`, `/present`): Shows checked-in attendees only.
+* **`/show unchecked only`** (Aliases: `/unchecked`, `/absent`): Shows unchecked attendees only.
+* **`/show valid emails only`** (Aliases: `/valid`, `/clean`, `/real`): Hides malformed or dummy emails.
+* **`/hide admin orders`** (Aliases: `/admin`, `/staff`, `/management`): Filters out administrative/internal tickets.
+* **`/hide test orders`** (Aliases: `/test`, `/sandbox`, `/fake`): Filters out test/sandbox purchases.
+* **`/hide void orders`** (Aliases: `/void`, `/cancelled`, `/refunded`): Filters out refunded or void tickets.
+* **`/hide duplicates`** (Aliases: `/hide repeats`, `/merge`): Groups duplicate emails into single rows.
+* **`/hide row [name]`** (Aliases: `/hiderow`, `/deleterow`): Hides a specific row from view.
+* **`/hide by rule [option] [values]`** (Aliases: `/hidebyrule`, `/rule_hide`): Bulk-hides rows by rules (e.g., `/hide by rule email user1@gmail.com user2@gmail.com`).
 
-### 🎨 Table Styles & Formatting
-* **`/toggle gridlines`** (Aliases: `/grid`, `/borders`, `/table grid`): Toggles distinct borders between cells for easier reading.
-* **`/toggle case format`** (Aliases: `/standardize names`, `/title case`, `/fix casing`): Automatically fixes messy uppercase/lowercase names to Title Case (e.g. converting "JOHN SMITH" to "John Smith").
-* **`/toggle theme`** (Aliases: `/theme`, `/dark mode`, `/light mode`): Swaps between Dark and Light mode themes.
-* **`/toggle full names`** (Aliases: `/merge names`, `/one name column`): Collapses the First Name and Last Name headers into a single "Name" column.
-* **`/set density [high/medium/low]`** (Aliases: `/density`, `/padding`, `/row height`): Adjusts row height spacing.
-* **`/highlight recent`** (Aliases: `/new tickets`, `/highlight new`): Applies a yellow highlight border to rows purchased within the last 24 hours.
-* **`/compact rows`** (Aliases: `/condense`, `/collapse cells`, `/truncate cells`): Toggles cell collapsing. When on (default), rows with multiple bookings collapse to show `+N more` instead of expanding vertically.
-
-### 🔍 Filtering & Audience Segmentation
+### 🎯 Custom Audience Segmentations
 * **`/show repeat buyers`** (Aliases: `/repeats`, `/loyal`, `/multi-buyers`): Shows only attendees who have purchased tickets to 2 or more different events.
 * **`/show domain [domain]`** (Aliases: `/domain`, `/email domain`): Filters to show only emails matching a domain (e.g. `/show domain gmail.com`).
 * **`/hide domain [domain]`** (Aliases: `/ignore domain`, `/exclude domain`): Filters out specific email domains.
@@ -84,17 +85,24 @@ Here is the complete list of every available command:
 * **`/show local phone [prefix]`** (Aliases: `/local`, `/area code`): Filters phone numbers by area code or prefix.
 * **`/show ticket range [min] [max]`** (Aliases: `/price range`, `/ticket price`): Shows tickets within a specific price range.
 * **`/show free tickets`** (Aliases: `/free`, `/comps`): Shows $0.00 tickets.
-* **`/hide admin orders`** (Aliases: `/admin`, `/staff`, `/management`): Filters out administrative/internal tickets.
-* **`/show checked-in only`** (Aliases: `/checked`, `/checkedin`, `/present`): Shows checked-in attendees only.
-* **`/show unchecked only`** (Aliases: `/unchecked`, `/absent`): Shows unchecked attendees only.
-* **`/show valid emails only`** (Aliases: `/valid`, `/clean`, `/real`): Hides malformed or dummy emails.
-* **`/hide test orders`** (Aliases: `/test`, `/sandbox`, `/fake`): Filters out test/sandbox purchases.
-* **`/hide void orders`** (Aliases: `/void`, `/cancelled`, `/refunded`): Filters out refunded or void tickets.
-* **`/hide duplicates`** (Aliases: `/hide repeats`, `/merge`): Groups duplicate emails into single rows.
-* **`/hide row [name]`** (Aliases: `/hiderow`, `/deleterow`): Hides a specific row from view.
-* **`/hide by rule [option] [values]`** (Aliases: `/hidebyrule`, `/rule_hide`): Bulk-hides rows by rules (e.g., `/hide by rule email user1@gmail.com user2@gmail.com`).
 
-### 🛠️ Utilities
+### 🎨 Layout, Styling & Formatting
+* **`/toggle gridlines`** (Aliases: `/grid`, `/borders`, `/table grid`): Toggles distinct borders between cells for easier reading.
+* **`/toggle case format`** (Aliases: `/standardize names`, `/title case`, `/fix casing`): Automatically fixes messy uppercase/lowercase names to Title Case (e.g. converting "JOHN SMITH" to "John Smith").
+* **`/toggle theme`** (Aliases: `/theme`, `/dark mode`, `/light mode`): Swaps between Dark and Light mode themes.
+* **`/toggle full names`** (Aliases: `/merge names`, `/one name column`): Collapses the First Name and Last Name headers into a single "Name" column.
+* **`/set density [high/medium/low]`** (Aliases: `/density`, `/padding`, `/row height`): Adjusts row height spacing.
+* **`/highlight recent`** (Aliases: `/new tickets`, `/highlight new`): Applies a yellow highlight border to rows purchased within the last 24 hours.
+* **`/compact rows`** (Aliases: `/condense`, `/collapse cells`, `/truncate cells`): Toggles cell collapsing. When on (default), rows with multiple bookings collapse to show `+N more` instead of expanding vertically.
+
+### 📋 Copying & Exporting
+* **`/copy bcc`** (Aliases: `/copy bcc list`, `/get emails`): Copies a clean list of all visible valid email addresses separated by commas to your clipboard. Perfect for pasting into your email client's BCC field to send updates.
+* **`/copy phones`** (Aliases: `/copy phone list`, `/get phones`): Copies a list of all visible phone numbers.
+* **`/export csv`** (Aliases: `/download csv`, `/save csv`): Downloads the current visible table view as a CSV spreadsheet.
+* **`/export json`** (Aliases: `/download json`, `/save json`): Downloads the visible table view as a JSON file.
+* **`/copy visible row`** (Aliases: `/copy row`, `/copy current`): Copies the cell data of the first visible row in the table.
+
+### 🛠️ Bulk Utilities
 * **`/unhide all`** (Aliases: `/restore rows`, `/show hidden rows`): Restores all manually hidden rows.
 * **`/invert selection`** (Aliases: `/invert hide`, `/reverse select`): Swaps hidden vs visible rows.
 * **`/keep visible`** (Aliases: `/only visible`, `/crop list`): Hides all rows that do not match the current search.
