@@ -1,12 +1,16 @@
 # Ticket Dash 🎟️
 
-### 🌐 Live Public Version: **[ticket-dash-henna.vercel.app](https://ticket-dash-henna.vercel.app)**
+### 🌐 Live Public Version: **[ticket-dash-app.vercel.app](https://ticket-dash-app.vercel.app)**
 
 ---
 
 Ticket Dash is a lightweight, read-only event dashboard and attendee roster viewer. It connects directly to your Ticket Tailor account (or loads local CSV files) to show all your ticket sales, order details, and check-in statuses in one fast, beautiful grid.
 
-Unlike complex database systems, Ticket Dash keeps your ticketing data private and secure by caching all records strictly **in-memory** on your local machine or in your browser's private local storage.
+### 🔒 How it Works & Security
+* **Zero Server Storage**: Your Ticket Tailor API Key is saved **only** on your local device (using your browser's private `localStorage`). It is never stored, cached, or logged on our servers.
+* **On-the-Fly Secure Proxy**: The hosted Vercel backend operates strictly as a stateless, on-the-fly proxy to fetch rosters in transit and return them to your screen.
+* **Complete Session Privacy**: Roster lists and keys exist only in your current browser session. If you delete your key, it is wiped from your browser instantly.
+* **Fully Open Source**: You can audit the code or run this dashboard entirely on-device for maximum security (see the **Easy Setup Guide** below).
 
 ---
 
