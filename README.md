@@ -7,7 +7,7 @@ Unlike complex database systems, Ticket Dash keeps your ticketing data private a
 ---
 
 ### 🌐 Live Public Version
-👉 **[Access the Hosted App here](https://your-vercel-project.vercel.app)** *(Replace this URL with your deployed Vercel URL once configured)*
+👉 **[Access the Hosted App here](https://ticket-dash-henna.vercel.app)**
 
 ---
 
