@@ -3295,6 +3295,13 @@ function loadSettings() {
 
 loadSettings();
 initEvents();
+
+// Open API key modal instantly on first visit of hosted version to prevent demo data flash
+const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+if (isHosted && !localStorage.getItem('ticket_tailor_api_key')) {
+  showApiKeyModal(false);
+}
+
 fetchTickets().then(() => {
   triggerAutoSync();
 });

@@ -1,13 +1,12 @@
 # Ticket Dash 🎟️
 
-Ticket Dash is a lightweight, read-only event dashboard and attendee roster viewer. It connects directly to your Ticket Tailor account (or loads local CSV files) to show all your ticket sales, order details, and check-in statuses in one fast, beautiful grid.
-
-Unlike complex database systems, Ticket Dash keeps your ticketing data private and secure by caching all records strictly **in-memory** on your local machine or in your browser's private local storage.
+### 🌐 Live Public Version: **[ticket-dash-henna.vercel.app](https://ticket-dash-henna.vercel.app)**
 
 ---
 
-### 🌐 Live Public Version
-👉 **[Access the Hosted App here](https://ticket-dash-henna.vercel.app)**
+Ticket Dash is a lightweight, read-only event dashboard and attendee roster viewer. It connects directly to your Ticket Tailor account (or loads local CSV files) to show all your ticket sales, order details, and check-in statuses in one fast, beautiful grid.
+
+Unlike complex database systems, Ticket Dash keeps your ticketing data private and secure by caching all records strictly **in-memory** on your local machine or in your browser's private local storage.
 
 ---
 
