@@ -520,16 +520,8 @@ function showToast(message, type = 'success') {
   if (!container) return;
 
   const toast = document.createElement('div');
-  toast.className = 'px-4 py-3 rounded border text-xs font-mono flex items-center gap-2.5 shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto min-w-[250px]';
+  toast.className = `custom-toast toast-${type} px-4 py-3 rounded border text-xs font-mono flex items-center gap-2.5 shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto min-w-[250px]`;
   
-  if (type === 'success') {
-    toast.className += ' bg-zinc-950 border-zinc-800 text-zinc-100';
-  } else if (type === 'error') {
-    toast.className += ' bg-rose-950/90 border-rose-900 text-rose-200';
-  } else {
-    toast.className += ' bg-zinc-900 border-zinc-800 text-zinc-300';
-  }
-
   let dotColor = 'bg-zinc-400';
   if (type === 'success') dotColor = 'bg-emerald-400';
   if (type === 'error') dotColor = 'bg-rose-400';

@@ -172,6 +172,109 @@
       border-color: var(--brandBorder) !important;
     }
 
+    .light-theme #export-settings-menu label {
+      color: var(--textMain) !important;
+    }
+
+    .light-theme #export-settings-menu label:hover {
+      background-color: var(--brandHover) !important;
+      color: var(--brandAccent) !important;
+    }
+
+    .light-theme .bg-\[\#0E0E10\],
+    .light-theme .bg-\[\#0E0E10\]\/80 {
+      background-color: var(--inputBg) !important;
+    }
+
+    .light-theme .bg-\[\#161619\] {
+      background-color: var(--brandBg) !important;
+    }
+
+    .light-theme input[type="checkbox"].accent-zinc-100 {
+      accent-color: var(--brandAccent) !important;
+    }
+
+    /* Dynamic toast notifications matching theme */
+    .custom-toast {
+      background-color: #18181B !important; /* bg-zinc-900 */
+      border-color: #27272A !important;     /* border-zinc-800 */
+      color: #F4F4F5 !important;            /* text-zinc-100 */
+    }
+    .custom-toast.toast-success {
+      border-color: rgba(16, 185, 129, 0.4) !important;
+    }
+    .custom-toast.toast-error {
+      background-color: rgba(127, 29, 29, 0.9) !important;
+      border-color: #7f1d1d !important;
+      color: #fecaca !important;
+    }
+    .light-theme .custom-toast {
+      background-color: #FFFFFF !important;
+      border-color: #E4E4E7 !important;
+      color: #18181B !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    }
+    .light-theme .custom-toast.toast-success {
+      border-color: rgba(16, 185, 129, 0.4) !important;
+    }
+    .light-theme .custom-toast.toast-error {
+      background-color: #FEF2F2 !important;
+      border-color: #FCA5A5 !important;
+      color: #991B1B !important;
+    }
+    .light-theme .custom-toast.toast-info {
+      background-color: #F4F4F5 !important;
+      border-color: #E4E4E7 !important;
+      color: #71717A !important;
+    }
+
+    /* API Key Modal styling in light theme */
+    .light-theme #api-key-setup-overlay div.bg-brandCard {
+      background-color: var(--brandCard) !important;
+      border-color: var(--brandBorder) !important;
+      color: var(--textMain) !important;
+    }
+    .light-theme #api-key-setup-overlay button {
+      transition: all 150ms ease;
+    }
+    .light-theme #save-setup-key-btn {
+      background-color: var(--brandAccent) !important;
+      color: var(--brandCard) !important;
+    }
+    .light-theme #save-setup-key-btn:hover {
+      opacity: 0.9;
+    }
+    .light-theme #cancel-setup-key-btn,
+    .light-theme #setup-change-key-btn {
+      background-color: var(--brandMuted) !important;
+      color: var(--textMain) !important;
+      border-color: var(--brandBorder) !important;
+    }
+    .light-theme #cancel-setup-key-btn:hover,
+    .light-theme #setup-change-key-btn:hover {
+      background-color: var(--brandBorder) !important;
+    }
+    .light-theme #setup-delete-key-btn {
+      background-color: #FEF2F2 !important;
+      border-color: #FCA5A5 !important;
+      color: #991B1B !important;
+    }
+    .light-theme #setup-delete-key-btn:hover {
+      background-color: #FEE2E2 !important;
+    }
+    .light-theme #run-demo-btn {
+      color: var(--textMuted) !important;
+    }
+    .light-theme #run-demo-btn:hover {
+      color: var(--textMain) !important;
+    }
+    .light-theme #setup-api-key-input::placeholder {
+      color: var(--textMuted) !important;
+    }
+    .light-theme #setup-api-key-input:focus {
+      border-color: var(--brandAccent) !important;
+    }
+
     /* Custom scrollbars according to Modern Web Guidance */
     .custom-scrollbar {
       --scrollbar-thumb: var(--scrollbarThumb);
