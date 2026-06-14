@@ -733,131 +733,7 @@ function checkApiKeySetup(apiConfigured) {
   showApiKeyModal(false);
 }
 
-function injectAboutKeyPanel() {
-  const aboutModalInner = document.querySelector('#about-modal > div');
-  if (aboutModalInner) {
-    let panel = document.getElementById('about-api-key-panel');
-    if (!panel) {
-      panel = document.createElement('div');
-      panel.id = 'about-api-key-panel';
-      panel.className = 'mt-3 pt-3 border-t border-brandBorder/60 flex flex-col gap-2 text-left';
-      const closeBtn = document.getElementById('close-about-btn');
-      aboutModalInner.insertBefore(panel, closeBtn);
-    }
-    
-    const localKey = localStorage.getItem('ticket_tailor_api_key');
-    if (localKey) {
-      const lastTwo = localKey.slice(-2);
-      panel.innerHTML = `
-        <div class="flex flex-col gap-1 text-left">
-          <span class="text-[9px] uppercase tracking-wider text-brandSubtext font-mono">Hosted API Configuration</span>
-          <div class="flex items-center justify-between bg-[#0E0E10] border border-brandBorder rounded px-3 py-2 text-xs">
-            <span class="text-zinc-400 font-mono">Active Key: ••••••••••••••${lastTwo}</span>
-            <div class="flex gap-2">
-              <button 
-                id="change-about-key-btn" 
-                class="px-2 py-1 rounded bg-zinc-800 text-zinc-200 border border-brandBorder font-mono text-[9px] hover:bg-zinc-700 transition-colors uppercase cursor-pointer"
-              >
-                Change
-              </button>
-              <button 
-                id="clear-about-key-btn" 
-                class="px-2 py-1 rounded bg-rose-950/80 border border-rose-900/60 text-rose-300 font-mono text-[9px] hover:bg-rose-900 transition-colors uppercase cursor-pointer"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-          <span class="text-[9px] text-zinc-500 font-sans mt-0.5 leading-normal">Note: The full key is hidden for security and cannot be viewed.</span>
-        </div>
-      `;
-      
-      document.getElementById('change-about-key-btn').addEventListener('click', () => {
-        panel.innerHTML = `
-          <div class="flex flex-col gap-1.5 text-left">
-            <span class="text-[9px] uppercase tracking-wider text-brandSubtext font-mono">Update API Key</span>
-            <div class="flex items-center gap-2">
-              <input 
-                type="password" 
-                id="about-api-key-input" 
-                placeholder="Paste new api_key..." 
-                class="flex-grow bg-[#0E0E10] border border-brandBorder rounded px-2.5 py-1.5 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
-              >
-              <button 
-                id="save-about-key-btn" 
-                class="px-2.5 py-1.5 rounded bg-zinc-100 text-zinc-950 font-mono text-[10px] font-semibold hover:bg-zinc-200 transition-colors uppercase cursor-pointer"
-              >
-                Save
-              </button>
-              <button 
-                id="cancel-about-key-btn" 
-                class="px-2.5 py-1.5 rounded bg-zinc-800 text-zinc-400 font-mono text-[10px] hover:bg-zinc-700 transition-colors uppercase cursor-pointer"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        `;
-        
-        document.getElementById('save-about-key-btn').addEventListener('click', async () => {
-          const input = document.getElementById('about-api-key-input');
-          const key = input.value.trim();
-          if (!key) {
-            showToast('Please enter an API key.', 'error');
-            return;
-          }
-          localStorage.setItem('ticket_tailor_api_key', key);
-          showToast('API Key updated. Reloading...');
-          location.reload();
-        });
-        
-        document.getElementById('cancel-about-key-btn').addEventListener('click', () => {
-          injectAboutKeyPanel();
-        });
-      });
-      
-      document.getElementById('clear-about-key-btn').addEventListener('click', () => {
-        localStorage.removeItem('ticket_tailor_api_key');
-        localStorage.removeItem('ticket_dash_local_imports');
-        showToast('API Key and local data deleted. Reloading...');
-        location.reload();
-      });
-      
-    } else {
-      panel.innerHTML = `
-        <div class="flex flex-col gap-1.5 text-left">
-          <span class="text-[9px] uppercase tracking-wider text-brandSubtext font-mono">Hosted API Configuration</span>
-          <div class="flex items-center gap-2">
-            <input 
-              type="password" 
-              id="about-api-key-input" 
-              placeholder="Configure Ticket Tailor API Key..." 
-              class="flex-grow bg-[#0E0E10] border border-brandBorder rounded px-2.5 py-1.5 text-xs text-zinc-200 placeholder-zinc-700 font-mono focus:outline-none focus:border-brandBorderActive transition-colors"
-            >
-            <button 
-              id="save-about-key-btn" 
-              class="px-2.5 py-1.5 rounded bg-zinc-100 text-zinc-950 font-mono text-[10px] font-semibold hover:bg-zinc-200 transition-colors uppercase cursor-pointer"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      `;
-      
-      document.getElementById('save-about-key-btn').addEventListener('click', async () => {
-        const input = document.getElementById('about-api-key-input');
-        const key = input.value.trim();
-        if (!key) {
-          showToast('Please enter an API key.', 'error');
-          return;
-        }
-        localStorage.setItem('ticket_tailor_api_key', key);
-        showToast('API Key configured. Reloading...');
-        location.reload();
-      });
-    }
-  }
-}
+
 
 async function fetchTickets() {
   try {
@@ -899,8 +775,7 @@ async function fetchTickets() {
     // Check if we need to show the API key overlay
     checkApiKeySetup(data.api_key_configured);
     
-    // Injects the key panel to the about modal
-    injectAboutKeyPanel();
+
     
     applyFilters();
 
