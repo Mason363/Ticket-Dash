@@ -1,6 +1,6 @@
 # Ticket Dash 🎟️
 
-### 🌐 Live Public Version: **[ticket-dash-app.vercel.app](https://ticket-dash-app.vercel.app)**
+### 🌐 Live Public Version: **[https://ticketdash.masn.studio](https://ticketdash.masn.studio/)**
 
 ---
 
